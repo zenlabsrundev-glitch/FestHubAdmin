@@ -32,6 +32,8 @@ interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
+export const API_BASE_URL = process.env.REACT_APP_API_URL || process.env.NEXT_PUBLIC_API_URL || "https://fest-ticket-hubbackend.vercel.app/api/v1";
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -52,7 +54,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signup = useCallback(async (name: string, email: string, password: string) => {
     try {
-      const res = await axios.post("http://localhost:8081/api/v1/auth/signup", {
+      const res = await axios.post(`${API_BASE_URL}/auth/signup`, {
         name: name.trim(),
         email: email.trim().toLowerCase(),
         password,
@@ -70,7 +72,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = useCallback(async (email: string, password: string) => {
     try {
-      const res = await axios.post("http://localhost:8081/api/v1/auth/login", {
+      const res = await axios.post(`${API_BASE_URL}/auth/login`, {
         email: email.trim().toLowerCase(),
         password,
       });

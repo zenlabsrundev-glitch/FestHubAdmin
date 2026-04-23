@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { API_BASE_URL } from "@/context/AuthContext";
 import { Pencil, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -36,7 +37,7 @@ export function AdminPage() {
 
   const fetchEvents = async () => {
     try {
-      const res = await axios.get("http://localhost:8081/api/v1/registration");
+      const res = await axios.get(`${API_BASE_URL}/registration`);
       if (res.data && res.data.success) {
         setEvents(res.data.data);
       } else if (Array.isArray(res.data)) {
@@ -57,7 +58,7 @@ export function AdminPage() {
   const handleSubmit = async (values: EventFormValues) => {
     try {
       if (editing) {
-        const res = await axios.put(`http://localhost:8081/api/v1/registration/${editing.id}`, values);
+        const res = await axios.put(`${API_BASE_URL}/registration/${editing.id}`, values);
         if (res.data && res.data.success) {
           toast.success(`Updated "${values.name}"`);
           setFormOpen(false);
@@ -67,7 +68,7 @@ export function AdminPage() {
           toast.error(res.data?.message || "Failed to update event");
         }
       } else {
-        const res = await axios.post(`http://localhost:8081/api/v1/registration`, values);
+        const res = await axios.post(`${API_BASE_URL}/registration`, values);
         if (res.data && res.data.success) {
           toast.success(`Created "${values.name}"`);
           setFormOpen(false);
@@ -186,7 +187,7 @@ export function AdminPage() {
                       checked={e.is_active}
                       onCheckedChange={async () => {
                         try {
-                          await axios.patch(`http://localhost:8081/api/v1/registration/${e.id}/toggle`);
+                          await axios.patch(`${API_BASE_URL}/registration/${e.id}/toggle`);
                           toast(`"${e.name}" is now ${!e.is_active ? "active" : "inactive"}`);
                           fetchEvents();
                         } catch (error) {
@@ -250,7 +251,7 @@ export function AdminPage() {
               onClick={async () => {
                 if (confirmDelete) {
                   try {
-                    await axios.delete(`http://localhost:8081/api/v1/registration/${confirmDelete.id}`);
+                    await axios.delete(`${API_BASE_URL}/registration/${confirmDelete.id}`);
                     toast.success(`Deleted "${confirmDelete.name}"`);
                     fetchEvents();
                   } catch (error) {
