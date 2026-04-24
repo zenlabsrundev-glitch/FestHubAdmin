@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
-import { API_BASE_URL } from "@/context/AuthContext";
+import api from "@/lib/api";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 
@@ -24,7 +23,7 @@ export function EventsPage() {
   useEffect(() => {
     const fetchRegistrations = async () => {
       try {
-        const res = await axios.get(`${API_BASE_URL}/registrations`);
+        const res = await api.get("/registrations");
         if (res.data && res.data.success) {
           setRegistrations(res.data.data);
         } else if (Array.isArray(res.data)) {

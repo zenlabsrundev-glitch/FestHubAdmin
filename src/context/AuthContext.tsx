@@ -1,12 +1,15 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
 import axios from "axios";
+import api, { API_BASE_URL } from "@/lib/api";
 
 // Constants for localStorage keys
 const AUTH_SESSION_KEY = "eventhub.session.v1";
 const AUTH_TOKEN_KEY = "eventhub.token.v1";
 
-// Axios Interceptor to automatically add the token to every request
-axios.interceptors.request.use((config) => {
+// The standard API client in @/lib/api handles authorization automatically.
+// We keep axios interceptors here only if you need them for other side effects,
+// but the new 'api' instance is preferred.
+api.interceptors.request.use((config) => {
   const token = localStorage.getItem(AUTH_TOKEN_KEY);
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
@@ -32,7 +35,7 @@ interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
-export const API_BASE_URL = process.env.REACT_APP_API_URL || process.env.NEXT_PUBLIC_API_URL || "https://fest-ticket-hubbackend.vercel.app/api/v1";
+
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -54,7 +57,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signup = useCallback(async (name: string, email: string, password: string) => {
     try {
-      const res = await axios.post(`${API_BASE_URL}/auth/signup`, {
+      const res = await api.post("/auth/signup", {
         name: name.trim(),
         email: email.trim().toLowerCase(),
         password,
@@ -72,7 +75,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = useCallback(async (email: string, password: string) => {
     try {
-      const res = await axios.post(`${API_BASE_URL}/auth/login`, {
+      const res = await api.post("/auth/login", {
         email: email.trim().toLowerCase(),
         password,
       });
